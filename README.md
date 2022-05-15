@@ -35,11 +35,24 @@ Test dans terminal : <code>http POST localhost:3000 hello=World valeur=2</code>
     }) 
 </code>
 
-
 ## Exercice 4
 Test dans le terminal : <code>http --form localhost:3000 hello=World valeur=2</code>
 <p>
     Autre moyen pour parser les arguments passer dans la requête http
 </p>
+
+## Exercice 5
+<p>
+Passer des arguments dans l'url
+</p>
+
+Test dans le terminal : <code>http GET :3000/hey/test/2</code>
+
+<code>
+app.get("/:arg1/test/:arg2", (req, res) => {
+    console.log(req.params);
+    res.send(req.params);
+})
+</code>
 
 
