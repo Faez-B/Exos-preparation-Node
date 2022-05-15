@@ -16,7 +16,7 @@
 </code>
 
 ## Exercice 3
-
+Test dans terminal : http POST localhost:3000 hello=World valeur=2 
 ### A - Sans middleware
 <code>
     app.post("/", (req, res) => {
