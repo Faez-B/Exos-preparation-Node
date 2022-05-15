@@ -155,3 +155,31 @@ app.put('/', (req, res) => {
 	res.send('Hello');
 })
 </code>
+
+## Exercice 9
+Test dans le terminal : 
+<code>http :8000</code>
+<code>http :8000/route2</code>
+
+<code>
+
+function errorMiddleware(err, req, res, next) {
+	res.status(500).json({erreur: err.message});
+}
+
+app.get('/', (req, res, next) => {
+	throw new Error('Ceci est un bug dans la route /');
+	res.send('Pas executé');
+})
+
+app.get('/route2', (req, res, next) => {
+	throw new Error('Ceci est un bug dans /route 2');
+	res.send('Pas executé');
+})
+
+// TOUJOURS UTILISER LE MIDDLEWARE ERREUR À LA FIN
+// APRÈS LES DÉFINITIONS ET LES AUTRES MIDDLEWARE
+app.use(errorMiddleware);
+
+</code>
+
