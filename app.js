@@ -4,9 +4,9 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT;
 
-app.get("/:arg1/test/:arg2", (req, res) => {
-    console.log(req.params);
-    res.send(req.params);
+app.get("/", (req, res) => {
+    console.log(req.query);
+    res.send(req.query);
 })
 
 app.listen(port, () => {

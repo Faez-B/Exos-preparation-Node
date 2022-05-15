@@ -55,4 +55,19 @@ app.get("/:arg1/test/:arg2", (req, res) => {
 })
 </code>
 
+## Exercice 6
+<p>
+Passer des arguments dans l'url en Search Params
+</p>
+
+Test dans le terminal : <code>curl http://localhost:3000/\?lg\=Fr\&page\=2</code> ou <code>http GET :3000/ lg==FR page==2
+</code>
+
+<code>
+app.get("/:arg1/test/:arg2", (req, res) => {
+    console.log(req.params);
+    res.send(req.params);
+})
+</code>
+
 
