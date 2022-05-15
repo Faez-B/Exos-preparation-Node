@@ -183,3 +183,36 @@ app.use(errorMiddleware);
 
 </code>
 
+## Exercice 10
+
+### 1 - Try, Catch (à la main)
+
+<code>
+app.get("/", async (req, res, next) => {
+  try {
+    throw new Error("Je suis un ASYNC bug");
+    res.send("JE NE SERAI JAMAIS EXECUTE");
+  } catch (exc) {
+    next(exc);
+  }
+});
+
+app.use((err, req, res, next) => {
+  res.status(500).json({ erreur: err.message });
+});
+</code>
+
+### 2 - Module express-async-errors
+
+<code>
+require('express-async-errors');
+app.get('/', async (req, res) => {
+	throw new Error("Je suis un ASYNC bug")
+	res.send('JE NE SERAI JAMAIS EXECUTE');
+})
+
+
+app.use((err, req, res, next) => {
+	res.status(500).json({erreur: err.message})
+})
+</code>
