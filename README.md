@@ -35,11 +35,123 @@ Test dans terminal : <code>http POST localhost:3000 hello=World valeur=2</code>
     }) 
 </code>
 
-
 ## Exercice 4
 Test dans le terminal : <code>http --form localhost:3000 hello=World valeur=2</code>
 <p>
     Autre moyen pour parser les arguments passer dans la requête http
 </p>
 
+## Exercice 5
+<p>
+Passer des arguments dans l'url
+</p>
 
+Test dans le terminal : <code>http GET :3000/hey/test/2</code>
+
+<code>
+app.get("/:arg1/test/:arg2", (req, res) => {
+    console.log(req.params);
+    res.send(req.params);
+})
+</code>
+
+## Exercice 6
+<p>
+Passer des arguments dans l'url en Search Params
+</p>
+
+Test dans le terminal : <code>curl http://localhost:3000/\?lg\=Fr\&page\=2</code> ou <code>http GET :3000/ lg==FR page==2
+</code>
+
+<code>
+app.get("/:arg1/test/:arg2", (req, res) => {
+    console.log(req.params);
+    res.send(req.params);
+})
+</code>
+
+## Exercice 7
+Utiliser des middleware persos
+Test dans le terminal : <code>curl http://localhost:3000</code>
+
+<code>
+function middleware1(req, res, next) {
+    console.log("middleware 1", req.method, req.url);
+    next(); 
+    // Il faut appeler next() dans les middleware qu'on créer pour passer au middleware suivant
+}
+
+function middleware2(req, res, next) {
+    console.log("middleware 2", req.method, req.url);
+    next(); 
+}
+
+app.use(middleware1);
+app.use(middleware2);
+app.use(middleware1);
+
+app.get('/', (req, res) => {
+    res.send('Hello world');
+})
+
+app.get("/hey", (req,res) => {
+    res.send("Hey");
+})
+</code>
+
+## Exercice 8
+
+Tester dans le terminal : 
+<code>http :8000</code>
+<code>http PUT :8000 number=2</code>
+<code>http DELETE :8000</code>
+
+<code>
+
+function modifyRequestObject(req, res, next) {
+	req.nouveau = { nouveauTruc: "je nexistais pas avant"};
+	next();
+}
+
+function modifyResponseObject(req, res, next) {
+	res.locals.blabla = "je nexistais pas avant";
+	next();
+}
+
+function blockDeleteRequest(req, res,next){;
+	if (req.method === "DELETE") {
+		throw new Error('NO DELETE PLEASE');
+	}
+	else next();
+}
+
+function blockPutRequest(req, res,next){
+	if (req.method === "PUT") {
+		res.status(400).send('NO DELETE PLEASE');
+        // Pas besoin de next() ici
+        // On envoie le code 400 avec status() avec res
+        // Et on fait un send() de message (!! ON NE FAIT PAS UN SEND DU STATUS CODE)
+        // Le send() interromps la chaine de middleware
+        // Donc à faire en dernier.
+	}
+	else {next()}
+}
+
+
+app.use(blockDeleteRequest);
+app.use(modifyRequestObject);
+app.use(modifyResponseObject);
+app.use(blockPutRequest);
+
+app.get('/', (req, res) => {
+	console.log(req.nouveau)
+	console.log(res.locals)
+	res.send('Hello World');
+})
+
+app.put('/', (req, res) => {
+    // jamais exécuté.
+    console.log("I AM IN"); 
+	res.send('Hello');
+})
+</code>
