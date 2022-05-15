@@ -216,3 +216,32 @@ app.use((err, req, res, next) => {
 	res.status(500).json({erreur: err.message})
 })
 </code>
+
+
+## Exercice 11
+
+!!! x Il est possible d'avoir plusieurs verbes/méthodes sur une même route, exemple :
+
+<code>
+app.get('/', (req, res) => {
+	res.send('ici traiter GET')
+})
+</code>
+
+<code>
+app.post('/', (req, res) => { 
+	res.send('ici traiter POST')
+})
+</code>
+
+<code>
+app.put('/', (req, res) => {
+	res.send('ici traiter PUT')
+})
+</code>
+
+<code>
+app.delete('/', (req, res) => {
+	res.send('ici traiter DELETE')
+})
+</code>
