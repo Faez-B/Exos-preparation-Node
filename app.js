@@ -4,7 +4,7 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT;
 
-app.use(express.json());
+app.use(express.urlencoded({extended:true}));
 
 app.post("/", (req, res) => {
     console.log(req.body); // affichage dans la console // dans le terminal => là où on lancer le serveur
