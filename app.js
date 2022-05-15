@@ -4,7 +4,7 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT;
 
-app.get('/', async (req, res) => {
+app.get('/', (req, res) => {
 	throw new Error("Je suis un ASYNC bug")
 	res.send('JE NE SERAI JAMAIS EXECUTE');
 })
