@@ -155,3 +155,64 @@ app.put('/', (req, res) => {
 	res.send('Hello');
 })
 </code>
+
+## Exercice 9
+Test dans le terminal : 
+<code>http :8000</code>
+<code>http :8000/route2</code>
+
+<code>
+
+function errorMiddleware(err, req, res, next) {
+	res.status(500).json({erreur: err.message});
+}
+
+app.get('/', (req, res, next) => {
+	throw new Error('Ceci est un bug dans la route /');
+	res.send('Pas executé');
+})
+
+app.get('/route2', (req, res, next) => {
+	throw new Error('Ceci est un bug dans /route 2');
+	res.send('Pas executé');
+})
+
+// TOUJOURS UTILISER LE MIDDLEWARE ERREUR À LA FIN
+// APRÈS LES DÉFINITIONS ET LES AUTRES MIDDLEWARE
+app.use(errorMiddleware);
+
+</code>
+
+## Exercice 10
+
+### 1 - Try, Catch (à la main)
+
+<code>
+app.get("/", async (req, res, next) => {
+  try {
+    throw new Error("Je suis un ASYNC bug");
+    res.send("JE NE SERAI JAMAIS EXECUTE");
+  } catch (exc) {
+    next(exc);
+  }
+});
+
+app.use((err, req, res, next) => {
+  res.status(500).json({ erreur: err.message });
+});
+</code>
+
+### 2 - Module express-async-errors
+
+<code>
+require('express-async-errors');
+app.get('/', async (req, res) => {
+	throw new Error("Je suis un ASYNC bug")
+	res.send('JE NE SERAI JAMAIS EXECUTE');
+})
+
+
+app.use((err, req, res, next) => {
+	res.status(500).json({erreur: err.message})
+})
+</code>
