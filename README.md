@@ -245,3 +245,36 @@ app.delete('/', (req, res) => {
 	res.send('ici traiter DELETE')
 })
 </code>
+
+## Exercice 12 - JOI
+Test dans le terminal : 
+<code>http :8000 name=A age=12</code>
+<code>http :8000 name=Adrien age=douze</code>
+<code>http :8000 name=Adrien age=12</code>
+
+<code>
+app.use(express.json()); // Parser les args
+
+app.post("/", (req, res) => {
+	const data = req.body;
+
+	const schema = Joi.object({
+		name: Joi.string().min(2).max(50).required(),
+		age: Joi.number().min(0)
+	});
+
+	const { value, error } = schema.validate(data);
+
+	// 400 : Bad request
+	if (error) res.status(400).send({ erreur: error.details[0].message });
+
+	// Si on a une erreur alors la suite ne sera pas exécuter 
+	db.insertOne(value);
+
+	console.log(db.getAll());
+
+	// 201 : created (PUT, POST)
+	res.status(201).json(data);
+
+})
+</code>
