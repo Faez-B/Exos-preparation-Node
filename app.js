@@ -4,33 +4,44 @@ const express = require('express');
 const path = require('path');
 const Joi = require("joi");
 const db = require("./db");
+const jwt = require("jsonwebtoken");
 const app = express();
 const port = process.env.PORT;
 
-app.use(express.json());
+const token = jwt.sign({userId: 12}, process.env.SECRET_JWT);
+console.log("token JWT", token);
 
-app.post("/", (req, res) => {
-	const data = req.body;
+const decoded = jwt.verify(token, process.env.SECRET_JWT);
+console.log("token JWT décodé", decoded);
 
-	const schema = Joi.object({
-		name: Joi.string().min(2).max(50).required(),
-		age: Joi.number().min(0)
-	});
+// verify avec une chaine incorrecte / 
+// chaine différente que celle qu'on a utilisé pour faire le sign
 
-	const { value, error } = schema.validate(data);
+// Match véritable token contre faux string
+try {
+	const notdecoded = jwt.verify(token, "PAS_LE_BON_SECRET");
+}catch(exc){
+	console.log("échec de jwt.verify : PAS LA BONNE SIGNATURE");
+}
 
-	// 400 : Bad request
-	if (error) res.status(400).send({ erreur: error.details[0].message });
 
-	// Si on a une erreur alors la suite ne sera pas exécuter 
-	db.insertOne(value);
+// Match faux token contre vrai string
 
-	console.log(db.getAll());
+const token2 = jwt.sign({userId: 13}, process.env.SECRET_JWT);
 
-	// 201 : created (PUT, POST)
-	res.status(201).json(data);
+const header = token.split('.')[0];
+const payload = token.split('.')[1];
+const signature = token2.split('.')[2];
 
-})
+const fakeToken = header +"."+ payload +"."+ signature
+console.log("FAKE TOKEN : ", fakeToken);
+
+
+try {
+  const failedVerification = jwt.verify(fakeToken, process.env.SECRET_JWT);
+}catch(exc){
+  console.log('echec de la vérification du Faux Token : PAS LA BONNE SIGNATURE');
+}
 
 app.listen(port, () => {
     console.log(`Listening on port ${port}...`);
