@@ -46,7 +46,17 @@ class Collection{
       });
       return result || {};
     }
+    findByName (name) {
+        let result = false;
+        this.memoryDb.forEach( user => {
+            // console.log(user.name, name);
+            if (user.name == name) {
+                result = true;
+            }
+        });
+
+        return result;
+    }
   }
-  
   module.exports = Collection;
   

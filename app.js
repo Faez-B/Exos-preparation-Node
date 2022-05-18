@@ -35,16 +35,24 @@ app.post('/enregistrer/', async (req, res) => {
 	else {
 		const compte = value;
 
-		const salt = await bcrypt.genSalt(10);
-		const mdpHashed = await bcrypt.hash(compte.password, salt);
-		compte.password = mdpHashed;
-		
-		Comptes.insertOne(compte);
+		const found = Comptes.findByName(compte.name);
 
-		// 201 : PUT, POST
-		res.status(201).json({
-			name: value.name
-		})
+		if (found) {
+			res.status(400).send("Ce compte existe déjà, veuillez vous connecter");
+		} 
+		else {
+			const salt = await bcrypt.genSalt(10);
+			const mdpHashed = await bcrypt.hash(compte.password, salt);
+			compte.password = mdpHashed;
+			
+			Comptes.insertOne(compte);
+	
+			// 201 : PUT, POST
+			res.status(201).json({
+				name: value.name
+			})
+		}
+
 	}
 })
 
