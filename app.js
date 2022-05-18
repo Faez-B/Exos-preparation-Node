@@ -3,6 +3,7 @@ require('express-async-errors'); // Plus besoin d'écrire try, catch avec ce req
 const express = require('express');
 const path = require('path');
 const Joi = require("joi");
+const bcrypt = require("bcrypt");
 const db = require("./db");
 const Collection = require("./Collection");
 const jwt = require("jsonwebtoken");
@@ -17,7 +18,7 @@ app.get('/comptes/', (req, res) => {
 	res.json(Comptes.getAll());
 })
 
-app.post('/enregistrer/', (req, res) => {
+app.post('/enregistrer/', async (req, res) => {
 	const data = req.body;
 
 	const schema = Joi.object({
@@ -32,7 +33,13 @@ app.post('/enregistrer/', (req, res) => {
 		// Si erreur alors on s'arrête ici
 	}
 	else {
-		Comptes.insertOne(value);
+		const compte = value;
+
+		const salt = await bcrypt.genSalt(10);
+		const mdpHashed = await bcrypt.hash(compte.password, salt);
+		compte.password = mdpHashed;
+		
+		Comptes.insertOne(compte);
 
 		// 201 : PUT, POST
 		res.status(201).json({
@@ -50,4 +57,5 @@ if (process.env.NODE_ENV !== "test") {
 
 }
 
+// Pour faire les tests
 module.exports = { app, Comptes };
