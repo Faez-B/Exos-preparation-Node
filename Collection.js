@@ -48,14 +48,16 @@ class Collection{
     }
     findByName (name) {
         let result = false;
+        let compte = null;
         this.memoryDb.forEach( user => {
             // console.log(user.name, name);
             if (user.name == name) {
                 result = true;
+                compte = user;
             }
         });
 
-        return result;
+        return {result, compte};
     }
   }
   module.exports = Collection;
