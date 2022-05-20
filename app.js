@@ -12,11 +12,39 @@ const port = process.env.PORT;
 
 const Comptes = new Collection('Comptes');
 
+const mongoose = require('mongoose');
+
 app.use(express.json());
 
-app.get('/comptes/', (req, res) => {
+mongoose.connect('mongodb+srv://test:test@localhost/?authMechanism=DEFAULT')
+  .then(() => console.log('Connexion à MongoDB réussie !'))
+  .catch(() => console.log('Connexion à MongoDB échouée !'));
+
+function authGuard(req, res, next) {
+	const token = req.header('x-auth-token');
+	if (!token) return res.status(401).json({erreur: "Vous devez vous connecter"})
+  
+	try {
+	  const decoded = jwt.verify(token, process.env.SECRET_JWT); 
+	  req.user = decoded;
+	  // Le middleware a fait son boulot et peut laisser la place au suivant.
+	  next();
+	} catch (exc) {
+	  return res.status(400).json({erreur: "Token Invalide"})
+	}
+  }
+
+app.get('/comptes/',[authGuard], (req, res) => {
 	res.json(Comptes.getAll());
 })
+
+app.get('/moncompte', [authGuard], (req, res) => {
+	const user = Accounts.getOne(req.user.id)
+  
+	delete user.password; // on ne veut pas transmettre le Hash.
+  
+	res.status(200).send({user});
+  })
 
 app.post('/enregistrer/', async (req, res) => {
 	const data = req.body;
