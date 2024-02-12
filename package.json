@@ -23,7 +23,7 @@
     "express-async-errors": "^3.1.1",
     "jest": "^28.1.0",
     "joi": "^17.6.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^6.3.3",
     "nodemon": "^2.0.16",
     "supertest": "^6.2.3"
